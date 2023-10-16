@@ -87,7 +87,7 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 ### _*Deploying to the Cloud Infrastructure*_
 
 1. Deploy the SQL Managed Instance with Terraform by running the `Terraform-Deploy-SQL-MI` GitHub Action. This action will take up to 30 minutes to run.
-2. Once the SQL Managed Instance is deployed, you need to enable it to communicate with a self-hosted runner. You may do this either by creting a new runner in the newly created SQL MI Virtual Network, or peering the SQL MI virtual network to an existing virtual network containing a self-hosted runner.
+2. Once the SQL Managed Instance is deployed, you need to enable it to communicate with a self-hosted runner. You may do this either by creating a new runner in the newly created SQL MI Virtual Network, or by peering the SQL MI virtual network to an existing virtual network containing a self-hosted runner.
 
    - To peer the virtual networks, follow the steps [here](https://docs.microsoft.com/en-us/azure/virtual-network/tutorial-connect-virtual-networks-portal) (Since both networks will already exist, you may begin at [this step](https://learn.microsoft.com/en-us/azure/virtual-network/tutorial-connect-virtual-networks-portal#create-virtual-network-peer), and you may skip the 'Create virtual machines' step). _The address space of your SQL MI may not overlap with the address space of your self-hosted runner's network_.
 
