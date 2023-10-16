@@ -1,0 +1,1 @@
+# azure-sql-mi-devops
