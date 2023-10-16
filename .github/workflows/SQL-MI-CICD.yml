@@ -1,0 +1,17 @@
+name: SQL-MI-CICD
+
+on:
+  push:
+    branches:
+      - "NA"
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3

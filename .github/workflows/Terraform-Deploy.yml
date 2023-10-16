@@ -1,10 +1,10 @@
 name: Terraform-Deploy
 
-# on:
-#   push:
-#     branches:
-#       - "NA"
 on:
+  push:
+    branches:
+      - "NA"
+
   workflow_dispatch:
 
 env:
