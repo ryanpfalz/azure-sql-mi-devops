@@ -1,0 +1,65 @@
+name: Terraform-Deploy
+
+on:
+  push:
+    branches:
+      - "NA"
+
+  workflow_dispatch:
+
+env:
+  TF_STATE_FILE: "dev/sqlmi_terraform.tfstate"
+  TF_DIR: "./infra/terraform/modules/module-azure-sql-mi"
+
+jobs:
+  deploy:
+    name: "Deploy Infrastructure"
+    runs-on: ubuntu-latest
+    env:
+      #this is needed since we are running terraform with read-only permissions
+      ARM_SKIP_PROVIDER_REGISTRATION: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Install the latest version of the Terraform CLI
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      - name: "Login via Azure CLI"
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_SP_CREDENTIALS }}
+
+      - name: Setup Terraform Backend in Azure
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az group create --name ${{ vars.TF_RESOURCE_GROUP }} --location ${{ vars.TF_REGION }}
+            az storage account create --resource-group ${{ vars.TF_RESOURCE_GROUP }} --name ${{ vars.TF_STORAGE_ACCOUNT }} --sku Standard_LRS --encryption-services blob
+            tfBackendStorageKey=$(az storage account keys list --account-name ${{ vars.TF_STORAGE_ACCOUNT }} --resource-group ${{ vars.TF_RESOURCE_GROUP }} --query "[0].value" --output tsv)
+            az storage container create --name ${{ vars.TF_CONTAINER_NAME }} --public-access off --account-name ${{ vars.TF_STORAGE_ACCOUNT }} --account-key $tfBackendStorageKey
+
+      - name: Terraform Init
+        id: tf-init
+        run: |
+          cd $TF_DIR
+          terraform init -reconfigure -backend-config="key=${{env.TF_STATE_FILE}}" -backend-config="storage_account_name=${{ vars.TF_STORAGE_ACCOUNT }}" -backend-config="container_name=${{ vars.TF_CONTAINER_NAME }}" -backend-config="resource_group_name=${{ vars.TF_RESOURCE_GROUP }}"
+
+      - name: Terraform Format
+        run: |
+          cd $TF_DIR
+          terraform fmt -check
+
+      - name: Terraform Plan
+        id: tf-plan
+        run: |
+          cd $TF_DIR
+          terraform plan -var "admin_username=${{ secrets.SQL_ADMIN_USER }}" -var "admin_password=${{ secrets.SQL_ADMIN_PASSWORD }}"  -detailed-exitcode -no-color -out tfplan || export exitcode=$?
+
+      - name: Terraform Apply
+        run: |
+          cd $TF_DIR
+          terraform apply -auto-approve tfplan
