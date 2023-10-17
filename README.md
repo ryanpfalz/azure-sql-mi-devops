@@ -83,6 +83,11 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 - A self-hosted runner is required because the agent must reside on the same virtual network as the SQL Managed Instance - you cannot deploy directly to a SQL Managed Instance from a GitHub-hosted runner.
 - The self-hosted runner is required to run the `SQL-MI-CICD` GitHub Actions workflow. The runner can be hosted on a VM or container. For the purposes of this sample codebase, I have set up a self-hosted runner on a VM by following the steps [here](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners). You may set up a more sophisticated runner for your setup. The steps to provision the runner are outside of the scope of this sample codebase, but I will describe how to use your runner with your SQL Managed Instance below.
   - You should consider configuring the self-hosted runner application as a service to automatically start the runner application when the machine starts, which can be done by following the steps [here](https://docs.github.com/en/actions/hosting-your-own-runners/configuring-the-self-hosted-runner-application-as-a-service#configuring-the-self-hosted-runner-application-as-a-service-on-windows).
+- Running the self-hosted runner on the VM: Change directory to the directory containing the runner service, and start the service. For example:
+  ```
+  cd actions-runner
+  sudo ./svc.sh start
+  ```
 
 ### _*Deploying to the Cloud Infrastructure*_
 
@@ -107,3 +112,4 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 ## Additional Resources
 
 - [Azure SQLPackage GitHub Action](https://github.com/Azure/run-sqlpackage-action)
+- [Spreading your SQL Server wings with Azure SQL Managed Instances - blog](https://www.kevinrchant.com/2023/05/06/spreading-your-sql-server-wings-with-azure-sql-managed-instances/)
