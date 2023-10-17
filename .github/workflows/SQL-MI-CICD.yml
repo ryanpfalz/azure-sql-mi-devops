@@ -64,9 +64,9 @@ jobs:
     #       profile: data/profile.xml
     #     #   authtoken: ${{ steps.sql-login.outputs.token }}
 
-    #   - name: Install sqlpackage
-    #     run: |
-    #       dotnet tool install -g microsoft.sqlpackage
+      - name: Install sqlpackage
+        run: |
+          dotnet tool install -g microsoft.sqlpackage
 
         # Assuming you're running on an Ubuntu self-hosted runner
         #   wget -q https://download.microsoft.com/download/3/1/D/31D734E0-BFE8-4C33-A9DE-2392808ADEE2/sqlpackage-linux-x64-latest.zip
