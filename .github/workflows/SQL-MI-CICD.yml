@@ -40,6 +40,8 @@ jobs:
     needs: build
     name: Deploy
     runs-on: self-hosted
+    env:
+      DOTNET_INSTALL_DIR: "./.dotnet"
 
     steps:
       - name: Install Azure CLI
