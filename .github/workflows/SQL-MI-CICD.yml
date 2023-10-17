@@ -15,6 +15,8 @@ jobs:
   build:
     name: "Build"
     runs-on: self-hosted
+    env:
+      DOTNET_INSTALL_DIR: "./.dotnet" # https://github.com/actions/setup-dotnet/issues/327#issuecomment-1278572993
 
     steps:
       - name: Checkout
@@ -38,7 +40,7 @@ jobs:
     needs: build
     name: Deploy Dev
     runs-on: self-hosted
-    
+
     steps:
       - name: "Login via Azure CLI"
         uses: azure/login@v1
