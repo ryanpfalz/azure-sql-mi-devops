@@ -56,13 +56,18 @@ jobs:
         with:
           name: ${{ env.SQL_ARTIFACT_NAME }}
 
-    #   - name: Deploying changes to target
-    #     uses: Azure/run-sqlpackage-action@v1.0.0
-    #     with:
-    #       action: "Publish"
-    #       sourcepath: "./${{ env.SQL_PROJECT_NAME }}.dacpac"
-    #       profile: data/profile.xml
-    #     #   authtoken: ${{ steps.sql-login.outputs.token }}
+      #   - name: Deploying changes to target
+      #     uses: Azure/run-sqlpackage-action@v1.0.0
+      #     with:
+      #       action: "Publish"
+      #       sourcepath: "./${{ env.SQL_PROJECT_NAME }}.dacpac"
+      #       profile: data/profile.xml
+      #     #   authtoken: ${{ steps.sql-login.outputs.token }}
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "6.0.x"
 
       - name: Install sqlpackage
         run: |
