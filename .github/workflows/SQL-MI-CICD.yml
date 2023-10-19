@@ -28,7 +28,7 @@ jobs:
           dotnet-version: "6.0.x"
 
       - name: Install SQL SDK
-        run: dotnet new install Microsoft.Build.Sql.Templates::0.1.10-preview
+        run: dotnet new install Microsoft.Build.Sql.Templates
 
       - name: Build DACPAC
         run: dotnet build "data/${{ env.SQL_PROJECT_NAME }}/${{ env.SQL_PROJECT_NAME }}.sqlproj" --configuration Release
