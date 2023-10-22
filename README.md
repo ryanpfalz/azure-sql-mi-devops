@@ -65,7 +65,7 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 - The following credentials are used to set up the Azure SQL Managed Instance.
 
   2.  `SQL_ADMIN_USER` - Username you want to use for the SQL Server
-  3.  `SQL_ADMIN_PASSWORD` - Password you want to use for the SQL Server. Note that the password must be at least 16 characters in length and contain uppercase, lowercase,  numeric, and non-numeric characters, and it cannot contain part of the admin username.
+  3.  `SQL_ADMIN_PASSWORD` - Password you want to use for the SQL Server. Note that the password must be at least 16 characters in length and contain uppercase, lowercase, numeric, and non-numeric characters, and it cannot contain part of the admin username.
 
       Note: All other SQL MI variables are defined in `infra/terraform/modules/module-azure-sql-mi/variables.tf`
 
@@ -108,8 +108,10 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 
 - Deploy the SQL Managed Instance with Terraform by running the `Terraform-Deploy-SQL-MI` GitHub Action. This action will take up to 30 minutes to run. This will create a Managed Instance server and database.
 - After the SQL Managed Instance is deployed, there are some additional one-time setup steps that need to be taken to prepare the solution for deployment. The first step is to create a new variable in the repository that will be used to store the FQDN of the SQL MI. This value is generated as an output of the `Terraform-Deploy-SQL-MI` workflow.
-  - After running `Terraform-Deploy-SQL-MI`, navigate to the `Actions` tab in the repository, and select the `Terraform-Deploy-SQL-MI` workflow. Then, select the most recent run of the workflow, and navigate to the `Terraform Outputs` section. Copy the value of the `sql_mi_fqdn` output. 
-  - In your Actions Variables
+  - After running `Terraform-Deploy-SQL-MI`, navigate to the `Actions` tab in the repository, and select the workflow. Then, select the most recent run of the workflow, and look at the "Deploy Infrastructure summary". Copy the value of the Fully qualified domain name of SQL MI.
+    ![FQDN](./docs/images/fqdn.png)
+  - In your Actions Variables, create a new variable called `SQL_MI_FQDN` and paste the value of the Fully qualified domain name of SQL MI output into the value field.
+  - Note that this step may be automated via the [GitHub command line](https://cli.github.com/), but this is outside the scope of this tutorial.
 
 #### Connecting the Self-Hosted Runner to the SQL Managed Instance
 

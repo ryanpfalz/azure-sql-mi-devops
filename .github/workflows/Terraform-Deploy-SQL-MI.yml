@@ -19,14 +19,14 @@ jobs:
       #this is needed since we are running terraform with read-only permissions
       ARM_SKIP_PROVIDER_REGISTRATION: true
     steps:
-      # - name: Checkout
-      #   uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      # # Install the latest version of the Terraform CLI
-      # - name: Setup Terraform
-      #   uses: hashicorp/setup-terraform@v2
-      #   with:
-      #     terraform_wrapper: false
+      # Install the latest version of the Terraform CLI
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
 
       # Azure CLI needs to be preinstalled on the runner
       - name: "Login via Azure CLI"
@@ -34,36 +34,36 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_SP_CREDENTIALS }}
 
-      # - name: Setup Terraform Backend in Azure
-      #   uses: azure/CLI@v1
-      #   with:
-      #     inlineScript: |
-      #       az group create --name ${{ vars.TF_RESOURCE_GROUP }} --location ${{ vars.TF_REGION }}
-      #       az storage account create --resource-group ${{ vars.TF_RESOURCE_GROUP }} --name ${{ vars.TF_STORAGE_ACCOUNT }} --sku Standard_LRS --encryption-services blob
-      #       tfBackendStorageKey=$(az storage account keys list --account-name ${{ vars.TF_STORAGE_ACCOUNT }} --resource-group ${{ vars.TF_RESOURCE_GROUP }} --query "[0].value" --output tsv)
-      #       az storage container create --name ${{ vars.TF_CONTAINER_NAME }} --public-access off --account-name ${{ vars.TF_STORAGE_ACCOUNT }} --account-key $tfBackendStorageKey
+      - name: Setup Terraform Backend in Azure
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az group create --name ${{ vars.TF_RESOURCE_GROUP }} --location ${{ vars.TF_REGION }}
+            az storage account create --resource-group ${{ vars.TF_RESOURCE_GROUP }} --name ${{ vars.TF_STORAGE_ACCOUNT }} --sku Standard_LRS --encryption-services blob
+            tfBackendStorageKey=$(az storage account keys list --account-name ${{ vars.TF_STORAGE_ACCOUNT }} --resource-group ${{ vars.TF_RESOURCE_GROUP }} --query "[0].value" --output tsv)
+            az storage container create --name ${{ vars.TF_CONTAINER_NAME }} --public-access off --account-name ${{ vars.TF_STORAGE_ACCOUNT }} --account-key $tfBackendStorageKey
 
-      # - name: Terraform Init
-      #   id: tf-init
-      #   run: |
-      #     cd $TF_DIR
-      #     terraform init -reconfigure -backend-config="key=${{env.TF_STATE_FILE}}" -backend-config="storage_account_name=${{ vars.TF_STORAGE_ACCOUNT }}" -backend-config="container_name=${{ vars.TF_CONTAINER_NAME }}" -backend-config="resource_group_name=${{ vars.TF_RESOURCE_GROUP }}"
+      - name: Terraform Init
+        id: tf-init
+        run: |
+          cd $TF_DIR
+          terraform init -reconfigure -backend-config="key=${{env.TF_STATE_FILE}}" -backend-config="storage_account_name=${{ vars.TF_STORAGE_ACCOUNT }}" -backend-config="container_name=${{ vars.TF_CONTAINER_NAME }}" -backend-config="resource_group_name=${{ vars.TF_RESOURCE_GROUP }}"
 
-      # - name: Terraform Format
-      #   run: |
-      #     cd $TF_DIR
-      #     terraform fmt -check
+      - name: Terraform Format
+        run: |
+          cd $TF_DIR
+          terraform fmt -check
 
-      # - name: Terraform Plan
-      #   id: tf-plan
-      #   run: |
-      #     cd $TF_DIR
-      #     terraform plan -var "admin_username=${{ secrets.SQL_ADMIN_USER }}" -var "admin_password=${{ secrets.SQL_ADMIN_PASSWORD }}" -var "initial_catalog=${{ vars.SQL_INITIAL_CATALOG }}" -var "resource_name_root=${{ vars.RESOURCE_NAME_ROOT }}" -detailed-exitcode -no-color -out tfplan || export exitcode=$?
+      - name: Terraform Plan
+        id: tf-plan
+        run: |
+          cd $TF_DIR
+          terraform plan -var "admin_username=${{ secrets.SQL_ADMIN_USER }}" -var "admin_password=${{ secrets.SQL_ADMIN_PASSWORD }}" -var "initial_catalog=${{ vars.SQL_INITIAL_CATALOG }}" -var "resource_name_root=${{ vars.RESOURCE_NAME_ROOT }}" -detailed-exitcode -no-color -out tfplan || export exitcode=$?
 
-      # - name: Terraform Apply
-      #   run: |
-      #     cd $TF_DIR
-      #     terraform apply -auto-approve tfplan
+      - name: Terraform Apply
+        run: |
+          cd $TF_DIR
+          terraform apply -auto-approve tfplan
 
       # The output from this step needs to be configured as a secret in the repo prior to running CI/CD
       - name: "Get SQL MI FQDN"
@@ -72,8 +72,8 @@ jobs:
           $resourceGroup = "mi-${{ vars.RESOURCE_NAME_ROOT }}-rg"
           $sqlMiName = "mi-${{ vars.RESOURCE_NAME_ROOT }}-mssql"
           $fqdn = $(az sql mi show --name $sqlMiName --resource-group $resourceGroup --query fullyQualifiedDomainName).Replace("`"","")
-          echo "SQL_MI_FQDN=$fqdn" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          echo "SQL_MI_DOMAIN=$fqdn" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Output
         run: |
-          echo 'Fully qualified domain name of SQL MI: ${{ env.SQL_MI_FQDN }} ' >> $GITHUB_STEP_SUMMARY
+          echo 'Fully qualified domain name of SQL MI: ${{ env.SQL_MI_DOMAIN }} ' >> $GITHUB_STEP_SUMMARY
