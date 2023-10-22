@@ -24,15 +24,6 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
 }
 
-# TODO set the variables below either enter them in plain text after = sign, or change them in variables.tf
-#  (var.xyz will take the default value from variables.tf if you don't change it)
-
-# # Create resource group
-# resource "azurerm_resource_group" "rg" {
-#   name     = "${random_pet.prefix.id}-rg"
-#   location = var.location
-# }
-
 # Create security group
 resource "azurerm_network_security_group" "nsg" {
   name                = "${var.prefix}-${var.resource_name_root}-nsg" # "${random_pet.prefix.id}-nsg"
@@ -102,20 +93,6 @@ resource "azurerm_mssql_managed_instance" "main" {
   vcores                       = var.vcores
   storage_size_in_gb           = var.storage_size_in_gb
 }
-
-# resource "random_password" "password" {
-#   length      = 20
-#   min_lower   = 1
-#   min_upper   = 1
-#   min_numeric = 1
-#   min_special = 1
-#   special     = true
-# }
-
-# resource "random_pet" "prefix" {
-#   prefix = var.prefix
-#   length = 1
-# }
 
 resource "azurerm_mssql_managed_database" "test" {
   name                = var.initial_catalog

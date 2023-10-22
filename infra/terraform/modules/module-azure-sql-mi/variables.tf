@@ -4,12 +4,6 @@ variable "prefix" {
   description = "Prefix of the resource name"
 }
 
-# variable "resource_group_name" {
-#   type        = string
-#   description = "The Resource Group name to deploy the SQL server in."
-#   # default     = "sql-mi-rg"
-# }
-
 variable "location" {
   type        = string
   description = "Enter the location where you want to deploy the resources"

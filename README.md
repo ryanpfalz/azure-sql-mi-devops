@@ -93,7 +93,7 @@ The scenario presented in this codebase is simple and contrived - it is not inte
     - Add Nuget source to install SqlPackage: `dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org`
     - [SqlPackage (dotnet package)](https://learn.microsoft.com/en-us/sql/tools/sqlpackage/sqlpackage-download?view=sql-server-ver16#installation-cross-platform): `dotnet tool install -g microsoft.sqlpackage`
     - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows?tabs=azure-cli)
-    - [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3#installing-the-msi-package) for running `pwsh` command
+    - [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3#installing-the-msi-package)
 
   - For testing, you may consider installing additional tools on the self-hosted runner like [Git](https://git-scm.com/downloads) and [Azure Data Studio](https://docs.microsoft.com/en-us/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15).
 
@@ -103,18 +103,18 @@ The scenario presented in this codebase is simple and contrived - it is not inte
   .\run.cmd
   ```
 
-### _*Deploying to the Cloud Infrastructure*_
+### _*Deploying the Cloud Infrastructure*_
 
 #### Deploying the SQL Managed Instance
 
-- Deploy the SQL Managed Instance with Terraform by running the `Terraform-Deploy-SQL-MI` GitHub Action. This action will take up to 30 minutes to run. This will create a Managed Instance server and database.
+- Deploy the SQL Managed Instance with Terraform by running the `Terraform-Deploy` GitHub Action. This action will take up to 30 minutes to run. This will create a Managed Instance server and database.
 
 #### Connecting the Self-Hosted Runner to the SQL Managed Instance
 
 - Once the SQL Managed Instance is deployed, you need to enable it to communicate with the self-hosted runner. You may do this either by...
 
   - Creating your runner in the newly created SQL MI virtual network, or
-  - By peering the SQL MI virtual network to an existing virtual network containing a self-hosted runner (this is recommended as it separates the concerns between the MI network and runner network). This was the approach followed in setting up this guide.
+  - By peering the SQL MI virtual network with an existing virtual network containing a self-hosted runner (this is recommended as it separates the concerns between the MI network and runner network). This was the approach followed in setting up this guide.
     - To peer the virtual networks, follow the steps [here](https://docs.microsoft.com/en-us/azure/virtual-network/tutorial-connect-virtual-networks-portal) (Since both networks may already exist, you may begin at [this step](https://learn.microsoft.com/en-us/azure/virtual-network/tutorial-connect-virtual-networks-portal#create-virtual-network-peer), and you may skip the 'Create virtual machines' step). _The address space of your SQL MI may not overlap with the address space of your self-hosted runner's network_.
 
   Your peering may look something like this:
