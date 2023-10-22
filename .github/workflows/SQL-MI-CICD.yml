@@ -22,13 +22,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: "6.0.x"
+      # - name: Setup .NET SDK
+      #   uses: actions/setup-dotnet@v3
+      #   with:
+      #     dotnet-version: "6.0.x"
 
-      - name: Install SQL SDK
-        run: dotnet new install Microsoft.Build.Sql.Templates
+      # - name: Install SQL SDK
+      #   run: dotnet new install Microsoft.Build.Sql.Templates
 
       - name: Build DACPAC
         run: dotnet build "data/${{ env.SQL_PROJECT_NAME }}/${{ env.SQL_PROJECT_NAME }}.sqlproj" --configuration Release
@@ -43,13 +43,14 @@ jobs:
     needs: build
     name: Deploy
     runs-on: self-hosted
-    env:
-      DOTNET_INSTALL_DIR: "./.dotnet"
+    # env:
+    #   DOTNET_INSTALL_DIR: "./.dotnet"
 
     steps:
-      - name: Install Azure CLI
-        run: |
-          dotnet --info
+      # - name: Install Azure CLI
+      #   run: |
+      #     dotnet --info
+      
       # curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
       - name: "Login via Azure CLI"
         uses: azure/login@v1
