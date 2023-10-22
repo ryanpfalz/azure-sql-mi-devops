@@ -65,7 +65,7 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 - The following credentials are used to set up the Azure SQL Managed Instance.
 
   2.  `SQL_ADMIN_USER` - Username you want to use for the SQL Server
-  3.  `SQL_ADMIN_PASSWORD` - Password you want to use for the SQL Server. Note that the password must be at least 16 characters in length and contain uppercase, lowercase, and numeric characters, and non-numeric characters, and it cannot contain part of the admin username.
+  3.  `SQL_ADMIN_PASSWORD` - Password you want to use for the SQL Server. Note that the password must be at least 16 characters in length and contain uppercase, lowercase,  numeric, and non-numeric characters, and it cannot contain part of the admin username.
 
       Note: All other SQL MI variables are defined in `infra/terraform/modules/module-azure-sql-mi/variables.tf`
 
@@ -96,7 +96,7 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 
   - For testing, you may consider installing additional tools on the self-hosted runner like [Git](https://git-scm.com/downloads) and [Azure Data Studio](https://docs.microsoft.com/en-us/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15).
 
-- If you don't have the runner set to [run at startup](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/configuring-the-self-hosted-runner-application-as-a-service?platform=windows), you may run the self-hosted runner on the VM by navigating to the directory containing the runner service, and starting it. For example:
+- If you don't have the runner set to [run at startup](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/configuring-the-self-hosted-runner-application-as-a-service?platform=windows), you may run the self-hosted runner on the VM by navigating to the directory containing the runner service and starting it. For example:
   ```
   cd actions-runner
   .\run.cmd
