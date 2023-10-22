@@ -57,9 +57,18 @@ jobs:
         id: tf-plan
         run: |
           cd $TF_DIR
-          terraform plan -var "admin_username=${{ secrets.SQL_ADMIN_USER }}" -var "admin_password=${{ secrets.SQL_ADMIN_PASSWORD }}" -var "initial_catalog=${{ vars.SQL_INITIAL_CATALOG }}" -detailed-exitcode -no-color -out tfplan || export exitcode=$?
+          terraform plan -var "admin_username=${{ secrets.SQL_ADMIN_USER }}" -var "admin_password=${{ secrets.SQL_ADMIN_PASSWORD }}" -var "initial_catalog=${{ vars.SQL_INITIAL_CATALOG }}" -var "resource_name_root=${{ vars.RESOURCE_NAME_ROOT }}" -detailed-exitcode -no-color -out tfplan || export exitcode=$?
 
       - name: Terraform Apply
         run: |
           cd $TF_DIR
           terraform apply -auto-approve tfplan
+
+      - name: Get SQL MI FQDN
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            $resourceGroup = "mi-${{ vars.RESOURCE_NAME_ROOT }}-rg"
+            $sqlMiName = "mi-${{ vars.RESOURCE_NAME_ROOT }}-mssql"
+            $fqdn = $(az sql mi show --name $sqlMiName --resource-group $resourceGroup --query fullyQualifiedDomainName).Replace("`"","")
+            Write-Host $fqdn

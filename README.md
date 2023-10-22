@@ -2,9 +2,9 @@
 
 ---
 
-| Page Type | Languages    | Key Services               | Tools                         |
-| --------- | ------------ | -------------------------- | ----------------------------- |
-| Sample    | SQL <br> HCL | Azure SQL Managed Instance | Terraform <br> GitHub Actions |
+| Page Type | Languages                    | Key Services               | Tools                         |
+| --------- | ---------------------------- | -------------------------- | ----------------------------- |
+| Sample    | SQL <br> HCL <br> PowerShell | Azure SQL Managed Instance | Terraform <br> GitHub Actions |
 
 ---
 
@@ -77,7 +77,7 @@ The scenario presented in this codebase is simple and contrived - it is not inte
   2.  `TF_RESOURCE_GROUP` - Name of the resource group containing the Storage Account
   3.  `TF_STORAGE_ACCOUNT` - Name of the Storage Account for managing Terraform state
   4.  `TF_CONTAINER_NAME` - Name of the Storage Account container for managing Terraform state
-  5.  `SQL_SERVER_NAME` - Name of the SQL Managed Instance
+  5.  `RESOURCE_NAME_ROOT` - The root name of the resources to be created. The resources provisioned will have a suffix and prefix appended to this name.
   6.  `SQL_INITIAL_CATALOG` - Name of the database to be created on the SQL Managed Instance
 
 #### GitHub Self-Hosted Runner
@@ -123,12 +123,12 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 
 #### Verifying the Connection
 
-- From the VM, you can verify the connectivity over the peering/network link by running the following PowerShell command: `Test-NetConnection -computer <private endpoint>.database.windows.net -port 1433`.
+- From the self-hosted runner VM, you can verify the connectivity over the peering/network link by running the following PowerShell command: `Test-NetConnection -computer <private endpoint>.database.windows.net -port 1433`.
 - A script that can be run locally on the runner to test the connection and build/deploy steps prior to running the GitHub Action is in `etc/runner-build-test.ps1`.
 
 #### Running the CI/CD Action
 
-- After the virtual networks are peered, you may run the `SQL-MI-CICD` GitHub Action to deploy the sample database to the SQL Managed Instance.
+- After the virtual networks are peered/linked and tested, you may run the `SQL-MI-CICD` GitHub Action to deploy the SQL Project into the sample database in the SQL Managed Instance server.
 
 ## Architecture & Workflow
 

@@ -7,7 +7,7 @@ variable "prefix" {
 variable "resource_group_name" {
   type        = string
   description = "The Resource Group name to deploy the SQL server in."
-  default     = "sql-mi-rg"
+  # default     = "sql-mi-rg"
 }
 
 variable "location" {
@@ -52,5 +52,10 @@ variable "admin_password" {
 
 variable "initial_catalog" {
   description = "The default database in the SQL server."
+  sensitive   = true
+}
+
+variable "resource_name_root" {
+  description = "The root name of the resources."
   sensitive   = true
 }
