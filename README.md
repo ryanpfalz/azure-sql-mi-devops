@@ -115,7 +115,9 @@ The scenario presented in this codebase is simple and contrived - it is not inte
    ![Peering](./docs/images/peering.png)
 
 - Create a [virtual network link](https://learn.microsoft.com/en-us/azure/dns/private-dns-virtual-network-links) to the runner's virtual network on the MI's Private DNS Zone.
-- From the VM, you can verify the connectivity over the peering by running the following PowerShell command: `Test-NetConnection -computer <private endpoint>.database.windows.net -port 1433`.
+
+#### Verifying the Connection
+- From the VM, you can verify the connectivity over the peering/network link by running the following PowerShell command: `Test-NetConnection -computer <private endpoint>.database.windows.net -port 1433`.
 - A script that can be run locally on the runner to test the connection and build/deploy steps prior to running the GitHub Action is in `etc/runner-build-test.ps1`.
 
 3. After the virtual networks are peered, you may run the `SQL-MI-CICD` GitHub Action to deploy the sample database to the SQL Managed Instance.
