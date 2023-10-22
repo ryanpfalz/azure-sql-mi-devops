@@ -107,6 +107,9 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 #### Deploying the SQL Managed Instance
 
 - Deploy the SQL Managed Instance with Terraform by running the `Terraform-Deploy-SQL-MI` GitHub Action. This action will take up to 30 minutes to run. This will create a Managed Instance server and database.
+- After the SQL Managed Instance is deployed, there are some additional one-time setup steps that need to be taken to prepare the solution for deployment. The first step is to create a new variable in the repository that will be used to store the FQDN of the SQL MI. This value is generated as an output of the `Terraform-Deploy-SQL-MI` workflow.
+  - After running `Terraform-Deploy-SQL-MI`, navigate to the `Actions` tab in the repository, and select the `Terraform-Deploy-SQL-MI` workflow. Then, select the most recent run of the workflow, and navigate to the `Terraform Outputs` section. Copy the value of the `sql_mi_fqdn` output. 
+  - In your Actions Variables
 
 #### Connecting the Self-Hosted Runner to the SQL Managed Instance
 

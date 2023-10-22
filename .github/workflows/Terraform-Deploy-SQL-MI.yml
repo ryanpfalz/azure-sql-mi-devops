@@ -28,11 +28,11 @@ jobs:
       #   with:
       #     terraform_wrapper: false
 
-      # # Azure CLI needs to be preinstalled on the runner
-      # - name: "Login via Azure CLI"
-      #   uses: azure/login@v1
-      #   with:
-      #     creds: ${{ secrets.AZURE_SP_CREDENTIALS }}
+      # Azure CLI needs to be preinstalled on the runner
+      - name: "Login via Azure CLI"
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_SP_CREDENTIALS }}
 
       # - name: Setup Terraform Backend in Azure
       #   uses: azure/CLI@v1
