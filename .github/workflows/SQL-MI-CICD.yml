@@ -32,7 +32,7 @@ jobs:
 
   deployDev:
     needs: build
-    name: Deploy
+    name: "Deploy"
     runs-on: self-hosted
 
     steps:
@@ -55,7 +55,6 @@ jobs:
           echo "SQL_MI_HOST=$fqdn" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
       # SqlPackage needs to be preinstalled on the runner
-      # vars.SQL_MI_FQDN needs to be set as a repository variable after the MI is created with Terraform
       - name: Deploy DACPAC to SQL Managed Instance
         run: |
           sqlpackage /Action:Publish /SourceFile:"./${{ env.SQL_PROJECT_NAME }}.dacpac" /TargetUser:${{ secrets.SQL_ADMIN_USER }} /TargetPassword:${{ secrets.SQL_ADMIN_PASSWORD }} /TargetServerName:${{ env.SQL_MI_HOST }} /TargetDatabaseName:${{ vars.SQL_INITIAL_CATALOG }}
