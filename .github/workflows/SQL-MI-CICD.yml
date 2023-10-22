@@ -70,31 +70,34 @@ jobs:
       #       profile: data/profile.xml
       #     #   authtoken: ${{ steps.sql-login.outputs.token }}
 
-    #   - name: Setup .NET SDK
-    #     uses: actions/setup-dotnet@v3
-    #     with:
-    #       dotnet-version: "6.0.x"
+      #   - name: Setup .NET SDK
+      #     uses: actions/setup-dotnet@v3
+      #     with:
+      #       dotnet-version: "6.0.x"
 
-    #   - name: Install sqlpackage
-    #     run: |
-    #       dotnet tool install -g microsoft.sqlpackage
+      #   - name: Install sqlpackage
+      #     run: |
+      #       dotnet tool install -g microsoft.sqlpackage
 
-    # Assuming you're running on an Ubuntu self-hosted runner
-    #   wget -q https://download.microsoft.com/download/3/1/D/31D734E0-BFE8-4C33-A9DE-2392808ADEE2/sqlpackage-linux-x64-latest.zip
-    #   unzip sqlpackage-linux-x64-latest.zip -d sqlpackage
-    #   sudo mv sqlpackage /opt/
-    #   echo "/opt/sqlpackage" >> $GITHUB_PATH
-    #   rm sqlpackage-linux-x64-latest.zip
+      # Assuming you're running on an Ubuntu self-hosted runner
+      #   wget -q https://download.microsoft.com/download/3/1/D/31D734E0-BFE8-4C33-A9DE-2392808ADEE2/sqlpackage-linux-x64-latest.zip
+      #   unzip sqlpackage-linux-x64-latest.zip -d sqlpackage
+      #   sudo mv sqlpackage /opt/
+      #   echo "/opt/sqlpackage" >> $GITHUB_PATH
+      #   rm sqlpackage-linux-x64-latest.zip
 
-    #   - name: Deploy DACPAC to SQL Managed Instance
-    #     run: |
-    #       sqlpackage /Action:Publish /SourceFile:"./${{ env.SQL_PROJECT_NAME }}.dacpac" /TargetConnectionString:"Server=tcp:${{ vars.SQL_SERVER_NAME }}.database.windows.net,1433;Initial Catalog=${{ vars.SQL_INITIAL_CATALOG }};Persist Security Info=False;User ID=${{ vars.SQL_ADMIN_USER }};Password=${{ secrets.SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - name: Deploy DACPAC to SQL Managed Instance
+        run: |
+          sqlpackage /Action:Publish /SourceFile:"./${{ env.SQL_PROJECT_NAME }}.dacpac" /TargetConnectionString:"Server=tcp:${{ vars.SQL_SERVER_NAME }}.database.windows.net,1433;Initial Catalog=${{ vars.SQL_INITIAL_CATALOG }};Persist Security Info=False;User ID=${{ vars.SQL_ADMIN_USER }};Password=${{ secrets.SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 
-    #   "Server=your-managed-instance-name,1433;Database=yourdb;User ID=youruser;Password=${{ secrets.DB_PASSWORD }};Trusted_Connection=False;Encrypt=True;Connection Timeout=30;"
-      - name: Azure SQL Deploy
-        uses: Azure/sql-action@v2.1
-        with:
-          connection-string: "Server=tcp:${{ vars.SQL_SERVER_NAME }}.database.windows.net,1433;Initial Catalog=${{ vars.SQL_INITIAL_CATALOG }};Persist Security Info=False;User ID=${{ secrets.SQL_ADMIN_USER }};Password=${{ secrets.SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-          path: "./${{ env.SQL_PROJECT_NAME }}.dacpac"
-          action: publish
-          arguments: "/p:DropObjectsNotInSource=true"
+      #   "Server=your-managed-instance-name,1433;Database=yourdb;User ID=youruser;Password=${{ secrets.DB_PASSWORD }};Trusted_Connection=False;Encrypt=True;Connection Timeout=30;"
+      # - name: Azure SQL Deploy
+      #   uses: Azure/sql-action@v2.1
+      #   with:
+      #     connection-string: "Server=tcp:${{ vars.SQL_SERVER_NAME }}.database.windows.net,1433;Initial Catalog=${{ vars.SQL_INITIAL_CATALOG }};Persist Security Info=False;User ID=${{ secrets.SQL_ADMIN_USER }};Password=${{ secrets.SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      #     path: "./${{ env.SQL_PROJECT_NAME }}.dacpac"
+      #     action: publish
+      #     arguments: "/p:DropObjectsNotInSource=true"
+
+      - name: Clean up runner
+        run: rm -Recurse ${{github.workspace}}\*
