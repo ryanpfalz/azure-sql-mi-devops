@@ -106,6 +106,8 @@ The scenario presented in this codebase is simple and contrived - it is not inte
      Your peering may look something like this:
      ![Peering](./docs/images/peering.png)
 
+  - From the VM, you can verify the connectivity over the peering by running `nslookup <FQDN of private DNS>`.
+
 3. After the virtual networks are peered, you may run the `SQL-MI-CICD` GitHub Action to deploy the sample database to the SQL Managed Instance.
 
 ## Architecture & Workflow
