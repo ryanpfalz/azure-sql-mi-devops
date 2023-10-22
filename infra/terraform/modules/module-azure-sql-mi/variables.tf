@@ -49,3 +49,8 @@ variable "admin_password" {
   description = "The administrator password of the SQL server."
   sensitive   = true
 }
+
+variable "initial_catalog" {
+  description = "The default database in the SQL server."
+  sensitive   = true
+}
