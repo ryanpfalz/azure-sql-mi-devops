@@ -142,4 +142,4 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 
 - [Azure SQLPackage GitHub Action](https://github.com/Azure/run-sqlpackage-action)
 - [Spreading your SQL Server wings with Azure SQL Managed Instances - blog](https://www.kevinrchant.com/2023/05/06/spreading-your-sql-server-wings-with-azure-sql-managed-instances/)
-- [Troubleshooting connection issues](https://www.techbrothersit.com/2021/09/connection-was-denied-since-deny-public.html?m=1)
+- [Troubleshooting connection issues - blog](https://www.techbrothersit.com/2021/09/connection-was-denied-since-deny-public.html?m=1)
