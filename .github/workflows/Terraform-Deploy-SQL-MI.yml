@@ -28,6 +28,7 @@ jobs:
         with:
           terraform_wrapper: false
 
+      # Azure CLI needs to be preinstalled on the runner
       - name: "Login via Azure CLI"
         uses: azure/login@v1
         with:
@@ -57,9 +58,22 @@ jobs:
         id: tf-plan
         run: |
           cd $TF_DIR
-          terraform plan -var "admin_username=${{ secrets.SQL_ADMIN_USER }}" -var "admin_password=${{ secrets.SQL_ADMIN_PASSWORD }}" -var "initial_catalog=${{ vars.SQL_INITIAL_CATALOG }}" -detailed-exitcode -no-color -out tfplan || export exitcode=$?
+          terraform plan -var "admin_username=${{ secrets.SQL_ADMIN_USER }}" -var "admin_password=${{ secrets.SQL_ADMIN_PASSWORD }}" -var "initial_catalog=${{ vars.SQL_INITIAL_CATALOG }}" -var "resource_name_root=${{ vars.RESOURCE_NAME_ROOT }}" -detailed-exitcode -no-color -out tfplan || export exitcode=$?
 
       - name: Terraform Apply
         run: |
           cd $TF_DIR
           terraform apply -auto-approve tfplan
+
+      # The output from this step needs to be configured as a secret in the repo prior to running CI/CD
+      - name: "Get SQL MI FQDN"
+        shell: pwsh
+        run: |
+          $resourceGroup = "mi-${{ vars.RESOURCE_NAME_ROOT }}-rg"
+          $sqlMiName = "mi-${{ vars.RESOURCE_NAME_ROOT }}-mssql"
+          $fqdn = $(az sql mi show --name $sqlMiName --resource-group $resourceGroup --query fullyQualifiedDomainName).Replace("`"","")
+          echo "SQL_MI_HOST=$fqdn" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Output
+        run: |
+          echo 'Fully qualified domain name of SQL MI: ${{ env.SQL_MI_HOST }} ' >> $GITHUB_STEP_SUMMARY

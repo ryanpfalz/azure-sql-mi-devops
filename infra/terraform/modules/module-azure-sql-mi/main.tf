@@ -20,29 +20,20 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
+  name     = "${var.prefix}-${var.resource_name_root}-rg" # var.resource_group_name
   location = var.location
 }
 
-# TODO set the variables below either enter them in plain text after = sign, or change them in variables.tf
-#  (var.xyz will take the default value from variables.tf if you don't change it)
-
-# # Create resource group
-# resource "azurerm_resource_group" "rg" {
-#   name     = "${random_pet.prefix.id}-rg"
-#   location = var.location
-# }
-
 # Create security group
 resource "azurerm_network_security_group" "nsg" {
-  name                = "${random_pet.prefix.id}-nsg"
+  name                = "${var.prefix}-${var.resource_name_root}-nsg" # "${random_pet.prefix.id}-nsg"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 }
 
 # Create a virtual network
 resource "azurerm_virtual_network" "vnet" {
-  name                = "${random_pet.prefix.id}-vnet"
+  name                = "${var.prefix}-${var.resource_name_root}-vnet" # "${random_pet.prefix.id}-vnet"
   resource_group_name = azurerm_resource_group.rg.name
   address_space       = ["10.0.0.0/24"]
   location            = azurerm_resource_group.rg.location
@@ -50,7 +41,7 @@ resource "azurerm_virtual_network" "vnet" {
 
 # Create a subnet
 resource "azurerm_subnet" "subnet" {
-  name                 = "${random_pet.prefix.id}-subnet"
+  name                 = "${var.prefix}-${var.resource_name_root}-subnet" # "${random_pet.prefix.id}-subnet"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.0.0/27"]
@@ -77,7 +68,7 @@ resource "azurerm_subnet_network_security_group_association" "subnet_nsg_associa
 
 # Create a route table
 resource "azurerm_route_table" "route_table" {
-  name                          = "${random_pet.prefix.id}-rt"
+  name                          = "${var.prefix}-${var.resource_name_root}-rt" # "${random_pet.prefix.id}-rt"
   location                      = azurerm_resource_group.rg.location
   resource_group_name           = azurerm_resource_group.rg.name
   disable_bgp_route_propagation = false
@@ -91,7 +82,7 @@ resource "azurerm_subnet_route_table_association" "route_table_association" {
 
 # Create managed instance
 resource "azurerm_mssql_managed_instance" "main" {
-  name                         = "${random_pet.prefix.id}-mssql"
+  name                         = "${var.prefix}-${var.resource_name_root}-mssql" # "${random_pet.prefix.id}-mssql"
   resource_group_name          = azurerm_resource_group.rg.name
   location                     = azurerm_resource_group.rg.location
   subnet_id                    = azurerm_subnet.subnet.id
@@ -101,20 +92,6 @@ resource "azurerm_mssql_managed_instance" "main" {
   sku_name                     = var.sku_name
   vcores                       = var.vcores
   storage_size_in_gb           = var.storage_size_in_gb
-}
-
-# resource "random_password" "password" {
-#   length      = 20
-#   min_lower   = 1
-#   min_upper   = 1
-#   min_numeric = 1
-#   min_special = 1
-#   special     = true
-# }
-
-resource "random_pet" "prefix" {
-  prefix = var.prefix
-  length = 1
 }
 
 resource "azurerm_mssql_managed_database" "test" {

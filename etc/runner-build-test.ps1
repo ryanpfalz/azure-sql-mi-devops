@@ -1,8 +1,4 @@
-# The below script was used to build the SQL project locally on the runner.
-
-# Test connection on runner with SQL:
-# value can be found under vnet > private endpoints > (your endpoint) > dns configuration > custom DNS records FQDN
-# Test-NetConnection -computer <private DNS>.database.windows.net -port 1433
+# The below script can be used to build the SQL project locally on the runner for debugging.
 
 ## CHECKOUT
 $root = "" # replace with root path on runner
@@ -12,7 +8,7 @@ $repo = "azure-sql-mi-devops"
 $sqlProjectName = "DemoSqlProj"
 
 cd ./$devPath
-$pat = ""
+$pat = "" # GitHub Personal Access Token
 git clone "https://$pat@github.com/ryanpfalz/$repo.git"
 cd "$repo"
 # git checkout "dev"
@@ -24,8 +20,14 @@ dotnet build "data\$($sqlProjectName)\$($sqlProjectName).sqlproj" --configuratio
 
 ## RELEASE
 $buildPath = "$root\$devPath\$repo\data\$sqlProjectName\bin\Release"
-$serverName = ""
 $databaseName = ""
 $userName = ""
 $pass = ""
-sqlpackage /Action:Publish /SourceFile:"$buildPath\$sqlProjectName.dacpac" /TargetConnectionString:"Server=tcp:$serverName.database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$userName;Password=$pass;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+
+# FQDN of SQL MI can be found in the Azure portal under SQL managed instance > Overview > Host
+$fqdn = ""
+
+# Test connection on runner with SQL:
+Test-NetConnection -computer $fqdn -port 1433
+
+sqlpackage /Action:Publish /SourceFile:"$buildPath\$sqlProjectName.dacpac" /TargetUser:$userName /TargetPassword:$pass /TargetServerName:$fqdn /TargetDatabaseName:$databaseName
