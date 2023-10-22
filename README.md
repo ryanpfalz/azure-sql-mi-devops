@@ -81,8 +81,15 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 #### GitHub Self-Hosted Runner
 
 - A self-hosted runner is required because the agent must reside on the same virtual network as the SQL Managed Instance - you cannot deploy directly to a SQL Managed Instance from a GitHub-hosted runner.
-- The self-hosted runner is required to run the `SQL-MI-CICD` GitHub Actions workflow. The runner can be hosted on a VM or container. For the purposes of this sample codebase, I have set up a self-hosted runner on a VM by following the steps [here](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners). You may set up a more sophisticated runner for your setup. The steps to provision the runner are outside of the scope of this sample codebase, but I will describe how to use your runner with your SQL Managed Instance below.
-  - You should consider configuring the self-hosted runner application as a service to automatically start the runner application when the machine starts, which can be done by following the steps [here](https://docs.github.com/en/actions/hosting-your-own-runners/configuring-the-self-hosted-runner-application-as-a-service#configuring-the-self-hosted-runner-application-as-a-service-on-windows).
+- The self-hosted runner is required to run the `SQL-MI-CICD` GitHub Actions workflow. The runner can be hosted on a VM or container.
+- For the purposes of this sample codebase, I have set up a self-hosted Windows VM runner by following the steps [here](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners). You may use more sophisticated infrastructure for your setup.
+  - You should consider configuring the self-hosted runner application as a service to automatically start the runner application when the machine starts, which can be done by following the steps [here](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/configuring-the-self-hosted-runner-application-as-a-service?platform=windows).
+  - On this VM, you will need to set up the following:
+    - [.NET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) - add dotnet as a path variable
+    - Add Nuget source: `dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org`
+    - [SqlPackage (dotnet package)](https://learn.microsoft.com/en-us/sql/tools/sqlpackage/sqlpackage-download?view=sql-server-ver16#installation-cross-platform): `dotnet tool install -g microsoft.sqlpackage`
+    - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows?tabs=azure-cli)
+
 - Running the self-hosted runner on the VM: Change directory to the directory containing the runner service, and start the service. For example:
   ```
   cd actions-runner
