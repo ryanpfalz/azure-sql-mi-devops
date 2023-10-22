@@ -93,7 +93,7 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 - Running the self-hosted runner on the VM: Change directory to the directory containing the runner service, and start the service. For example:
   ```
   cd actions-runner
-  sudo ./svc.sh start
+  .\run.cmd
   ```
 
 ### _*Deploying to the Cloud Infrastructure*_
