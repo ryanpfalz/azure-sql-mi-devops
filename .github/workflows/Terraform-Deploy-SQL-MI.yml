@@ -72,8 +72,8 @@ jobs:
           $resourceGroup = "mi-${{ vars.RESOURCE_NAME_ROOT }}-rg"
           $sqlMiName = "mi-${{ vars.RESOURCE_NAME_ROOT }}-mssql"
           $fqdn = $(az sql mi show --name $sqlMiName --resource-group $resourceGroup --query fullyQualifiedDomainName).Replace("`"","")
-          echo "SQL_MI_DOMAIN=$fqdn" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          echo "SQL_MI_HOST=$fqdn" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Output
         run: |
-          echo 'Fully qualified domain name of SQL MI: ${{ env.SQL_MI_DOMAIN }} ' >> $GITHUB_STEP_SUMMARY
+          echo 'Fully qualified domain name of SQL MI: ${{ env.SQL_MI_HOST }} ' >> $GITHUB_STEP_SUMMARY
