@@ -48,11 +48,19 @@ jobs:
         with:
           name: ${{ env.SQL_ARTIFACT_NAME }}
 
+      - name: "Get SQL MI FQDN"
+        shell: pwsh
+        run: |
+          $resourceGroup = "mi-${{ vars.RESOURCE_NAME_ROOT }}-rg"
+          $sqlMiName = "mi-${{ vars.RESOURCE_NAME_ROOT }}-mssql"
+          $fqdn = $(az sql mi show --name $sqlMiName --resource-group $resourceGroup --query fullyQualifiedDomainName).Replace("`"","")
+          echo "SQL_MI_DOMAIN=$fqdn" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+  
       # SqlPackage needs to be preinstalled on the runner
       # vars.SQL_MI_FQDN needs to be set as a repository variable after the MI is created with Terraform
       - name: Deploy DACPAC to SQL Managed Instance
         run: |
-          sqlpackage /Action:Publish /SourceFile:"./${{ env.SQL_PROJECT_NAME }}.dacpac" /TargetConnectionString:"Server=tcp:${{ vars.SQL_MI_FQDN }},1433;Initial Catalog=${{ vars.SQL_INITIAL_CATALOG }};Persist Security Info=False;User ID=${{ secrets.SQL_ADMIN_USER }};Password=${{ secrets.SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+          sqlpackage /Action:Publish /SourceFile:"./${{ env.SQL_PROJECT_NAME }}.dacpac" /TargetConnectionString:"Server=tcp:${{ env.SQL_MI_DOMAIN }},1433;Initial Catalog=${{ vars.SQL_INITIAL_CATALOG }};Persist Security Info=False;User ID=${{ secrets.SQL_ADMIN_USER }};Password=${{ secrets.SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 
       - name: Clean up runner
         run: rm -Recurse ${{github.workspace}}\*
