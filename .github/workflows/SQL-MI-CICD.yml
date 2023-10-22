@@ -50,7 +50,7 @@ jobs:
       # - name: Install Azure CLI
       #   run: |
       #     dotnet --info
-      
+
       # curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
       - name: "Login via Azure CLI"
         uses: azure/login@v1
@@ -91,10 +91,10 @@ jobs:
     #       sqlpackage /Action:Publish /SourceFile:"./${{ env.SQL_PROJECT_NAME }}.dacpac" /TargetConnectionString:"Server=tcp:${{ vars.SQL_SERVER_NAME }}.database.windows.net,1433;Initial Catalog=${{ vars.SQL_INITIAL_CATALOG }};Persist Security Info=False;User ID=${{ vars.SQL_ADMIN_USER }};Password=${{ secrets.SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 
     #   "Server=your-managed-instance-name,1433;Database=yourdb;User ID=youruser;Password=${{ secrets.DB_PASSWORD }};Trusted_Connection=False;Encrypt=True;Connection Timeout=30;"
-    #   - name: Azure SQL Deploy
-    #     uses: Azure/sql-action@v2.1
-    #     with:
-    #       connection-string: "Server=tcp:${{ vars.SQL_SERVER_NAME }}.database.windows.net,1433;Initial Catalog=${{ vars.SQL_INITIAL_CATALOG }};Persist Security Info=False;User ID=${{ secrets.SQL_ADMIN_USER }};Password=${{ secrets.SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-    #       path: "./${{ env.SQL_PROJECT_NAME }}.dacpac"
-    #       action: publish
-    #       arguments: "/p:DropObjectsNotInSource=true"
+      - name: Azure SQL Deploy
+        uses: Azure/sql-action@v2.1
+        with:
+          connection-string: "Server=tcp:${{ vars.SQL_SERVER_NAME }}.database.windows.net,1433;Initial Catalog=${{ vars.SQL_INITIAL_CATALOG }};Persist Security Info=False;User ID=${{ secrets.SQL_ADMIN_USER }};Password=${{ secrets.SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+          path: "./${{ env.SQL_PROJECT_NAME }}.dacpac"
+          action: publish
+          arguments: "/p:DropObjectsNotInSource=true"
