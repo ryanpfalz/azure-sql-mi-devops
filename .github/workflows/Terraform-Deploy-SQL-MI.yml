@@ -65,7 +65,7 @@ jobs:
           cd $TF_DIR
           terraform apply -auto-approve tfplan
 
-      # The output from this step needs to be configured as a secret in the repo prior to running CI/CD
+      # The below is output for informational purposes
       - name: "Get SQL MI FQDN"
         shell: pwsh
         run: |
