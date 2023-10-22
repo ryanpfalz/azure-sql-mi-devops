@@ -4,7 +4,7 @@
 
 | Page Type | Languages                    | Key Services               | Tools                         |
 | --------- | ---------------------------- | -------------------------- | ----------------------------- |
-| Sample    | SQL <br> HCL <br> PowerShell | Azure SQL Managed Instance | Terraform <br> GitHub Actions |
+| Sample    | SQL <br> HCL <br> PowerShell | Azure SQL Managed Instance <br> Azure VM (Windows) | Terraform <br> GitHub Actions |
 
 ---
 
