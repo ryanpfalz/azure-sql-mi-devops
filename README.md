@@ -84,11 +84,13 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 - The self-hosted runner is required to run the `SQL-MI-CICD` GitHub Actions workflow. The runner can be hosted on a VM or container.
 - For the purposes of this sample codebase, I have set up a self-hosted Windows VM runner by following the steps [here](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners). You may use more sophisticated infrastructure for your setup.
   - You should consider configuring the self-hosted runner application as a service to automatically start the runner application when the machine starts, which can be done by following the steps [here](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/configuring-the-self-hosted-runner-application-as-a-service?platform=windows).
-  - On this VM, you will need to set up the following:
+  - On this VM, you will need to set up the following tools:
     - [.NET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) - add dotnet as a path variable
     - Add Nuget source: `dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org`
     - [SqlPackage (dotnet package)](https://learn.microsoft.com/en-us/sql/tools/sqlpackage/sqlpackage-download?view=sql-server-ver16#installation-cross-platform): `dotnet tool install -g microsoft.sqlpackage`
     - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows?tabs=azure-cli)
+
+  - For testing, you may consider installing additional tools on the self-hosted runner like [Git](https://git-scm.com/downloads) and [Azure Data Studio](https://docs.microsoft.com/en-us/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15).
 
 - Running the self-hosted runner on the VM: Change directory to the directory containing the runner service, and start the service. For example:
   ```
@@ -99,14 +101,15 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 ### _*Deploying to the Cloud Infrastructure*_
 
 1. Deploy the SQL Managed Instance with Terraform by running the `Terraform-Deploy-SQL-MI` GitHub Action. This action will take up to 30 minutes to run.
-2. Once the SQL Managed Instance is deployed, you need to enable it to communicate with a self-hosted runner. You may do this either by creating a new runner in the newly created SQL MI virtual network, or by peering the SQL MI virtual network to an existing virtual network containing a self-hosted runner.
+2. Once the SQL Managed Instance is deployed, you need to enable it to communicate with a self-hosted runner. You may do this either by creating a new runner in the newly created SQL MI virtual network, or by peering the SQL MI virtual network to an existing virtual network containing a self-hosted runner. A private endpoint needs to be created for the SQL MI and a virtual network link needs to be made to the self-hosted runner's virtual network.
 
    - To peer the virtual networks, follow the steps [here](https://docs.microsoft.com/en-us/azure/virtual-network/tutorial-connect-virtual-networks-portal) (Since both networks will already exist, you may begin at [this step](https://learn.microsoft.com/en-us/azure/virtual-network/tutorial-connect-virtual-networks-portal#create-virtual-network-peer), and you may skip the 'Create virtual machines' step). _The address space of your SQL MI may not overlap with the address space of your self-hosted runner's network_.
 
      Your peering may look something like this:
      ![Peering](./docs/images/peering.png)
 
-  - From the VM, you can verify the connectivity over the peering by running `nslookup <FQDN of private DNS>`.
+  - From the VM, you can verify the connectivity over the peering by running the following PowerShell command: `Test-NetConnection -computer <private endpoint>.database.windows.net -port 1433`.
+  - A script that can be run locally on the runner to test the connection and build/deploy steps prior to running the GitHub Action is in `etc/runner-build-test.ps1`.
 
 3. After the virtual networks are peered, you may run the `SQL-MI-CICD` GitHub Action to deploy the sample database to the SQL Managed Instance.
 
@@ -122,3 +125,4 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 
 - [Azure SQLPackage GitHub Action](https://github.com/Azure/run-sqlpackage-action)
 - [Spreading your SQL Server wings with Azure SQL Managed Instances - blog](https://www.kevinrchant.com/2023/05/06/spreading-your-sql-server-wings-with-azure-sql-managed-instances/)
+- [Troubleshooting connection issues](https://www.techbrothersit.com/2021/09/connection-was-denied-since-deny-public.html?m=1)
