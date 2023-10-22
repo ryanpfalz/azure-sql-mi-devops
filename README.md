@@ -109,12 +109,10 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 
    - Creating your runner in the newly created SQL MI virtual network, or
    - By peering the SQL MI virtual network to an existing virtual network containing a self-hosted runner (this is recommended as it separates the concerns between the MI network and runner network). This was the approach followed in setting up this guide.
-     A private endpoint needs to be created for the SQL MI and a virtual network link needs to be made to the self-hosted runner's virtual network.
+     - To peer the virtual networks, follow the steps [here](https://docs.microsoft.com/en-us/azure/virtual-network/tutorial-connect-virtual-networks-portal) (Since both networks may already exist, you may begin at [this step](https://learn.microsoft.com/en-us/azure/virtual-network/tutorial-connect-virtual-networks-portal#create-virtual-network-peer), and you may skip the 'Create virtual machines' step). _The address space of your SQL MI may not overlap with the address space of your self-hosted runner's network_.
 
-- To peer the virtual networks, follow the steps [here](https://docs.microsoft.com/en-us/azure/virtual-network/tutorial-connect-virtual-networks-portal) (Since both networks may already exist, you may begin at [this step](https://learn.microsoft.com/en-us/azure/virtual-network/tutorial-connect-virtual-networks-portal#create-virtual-network-peer), and you may skip the 'Create virtual machines' step). _The address space of your SQL MI may not overlap with the address space of your self-hosted runner's network_.
-
-  Your peering may look something like this:
-  ![Peering](./docs/images/peering.png)
+   Your peering may look something like this:
+   ![Peering](./docs/images/peering.png)
 
 - Create a [virtual network link](https://learn.microsoft.com/en-us/azure/dns/private-dns-virtual-network-links) to the runner's virtual network on the MI's Private DNS Zone.
 - From the VM, you can verify the connectivity over the peering by running the following PowerShell command: `Test-NetConnection -computer <private endpoint>.database.windows.net -port 1433`.
