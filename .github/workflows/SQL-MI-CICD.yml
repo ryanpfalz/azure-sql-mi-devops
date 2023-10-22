@@ -30,6 +30,7 @@ jobs:
       # - name: Install SQL SDK
       #   run: dotnet new install Microsoft.Build.Sql.Templates
 
+      # Dotnet needs to be preinstalled on the runner
       - name: Build DACPAC
         run: dotnet build "data/${{ env.SQL_PROJECT_NAME }}/${{ env.SQL_PROJECT_NAME }}.sqlproj" --configuration Release
 
@@ -47,11 +48,8 @@ jobs:
     #   DOTNET_INSTALL_DIR: "./.dotnet"
 
     steps:
-      # - name: Install Azure CLI
-      #   run: |
-      #     dotnet --info
-
-      # curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      
+      # Azure CLI needs to be preinstalled on the runner
       - name: "Login via Azure CLI"
         uses: azure/login@v1
         with:
@@ -86,6 +84,7 @@ jobs:
       #   echo "/opt/sqlpackage" >> $GITHUB_PATH
       #   rm sqlpackage-linux-x64-latest.zip
 
+      # SqlPackage needs to be preinstalled on the runner
       - name: Deploy DACPAC to SQL Managed Instance
         run: |
           sqlpackage /Action:Publish /SourceFile:"./${{ env.SQL_PROJECT_NAME }}.dacpac" /TargetConnectionString:"Server=tcp:${{ vars.SQL_SERVER_NAME }}.database.windows.net,1433;Initial Catalog=${{ vars.SQL_INITIAL_CATALOG }};Persist Security Info=False;User ID=${{ secrets.SQL_ADMIN_USER }};Password=${{ secrets.SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"

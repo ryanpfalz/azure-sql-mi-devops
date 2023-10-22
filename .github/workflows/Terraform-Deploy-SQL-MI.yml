@@ -19,19 +19,20 @@ jobs:
       #this is needed since we are running terraform with read-only permissions
       ARM_SKIP_PROVIDER_REGISTRATION: true
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      # - name: Checkout
+      #   uses: actions/checkout@v3
 
-      # Install the latest version of the Terraform CLI
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_wrapper: false
+      # # Install the latest version of the Terraform CLI
+      # - name: Setup Terraform
+      #   uses: hashicorp/setup-terraform@v2
+      #   with:
+      #     terraform_wrapper: false
 
-      - name: "Login via Azure CLI"
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_SP_CREDENTIALS }}
+      # # Azure CLI needs to be preinstalled on the runner
+      # - name: "Login via Azure CLI"
+      #   uses: azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_SP_CREDENTIALS }}
 
       # - name: Setup Terraform Backend in Azure
       #   uses: azure/CLI@v1
@@ -64,18 +65,15 @@ jobs:
       #     cd $TF_DIR
       #     terraform apply -auto-approve tfplan
 
-      # - name: Get SQL MI FQDN
-      #   uses: azure/CLI@v1
-      #   with:
-      #     inlineScript: |
-      #       $resourceGroup = "mi-${{ vars.RESOURCE_NAME_ROOT }}-rg"
-      #       $sqlMiName = "mi-${{ vars.RESOURCE_NAME_ROOT }}-mssql"
-      #       $fqdn = $(az sql mi show --name $sqlMiName --resource-group $resourceGroup --query fullyQualifiedDomainName).Replace("`"","")
-      #       Write-Host $fqdn
-      - name: "Get Container Registry Credentials"
+      # The output from this step needs to be configured as a secret in the repo prior to running CI/CD
+      - name: "Get SQL MI FQDN"
         shell: pwsh
         run: |
           $resourceGroup = "mi-${{ vars.RESOURCE_NAME_ROOT }}-rg"
           $sqlMiName = "mi-${{ vars.RESOURCE_NAME_ROOT }}-mssql"
           $fqdn = $(az sql mi show --name $sqlMiName --resource-group $resourceGroup --query fullyQualifiedDomainName).Replace("`"","")
-          Write-Host $fqdn
+          echo "SQL_MI_FQDN=$fqdn" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Output
+        run: |
+          echo 'Fully qualified domain name of SQL MI: ${{ env.SQL_MI_FQDN }} ' >> $GITHUB_STEP_SUMMARY
