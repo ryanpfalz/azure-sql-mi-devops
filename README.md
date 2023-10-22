@@ -77,6 +77,8 @@ The scenario presented in this codebase is simple and contrived - it is not inte
   2.  `TF_RESOURCE_GROUP` - Name of the resource group containing the Storage Account
   3.  `TF_STORAGE_ACCOUNT` - Name of the Storage Account for managing Terraform state
   4.  `TF_CONTAINER_NAME` - Name of the Storage Account container for managing Terraform state
+  5. `SQL_SERVER_NAME` - Name of the SQL Managed Instance
+  6. `SQL_INITIAL_CATALOG` - Name of the database to be created on the SQL Managed Instance
 
 #### GitHub Self-Hosted Runner
 
