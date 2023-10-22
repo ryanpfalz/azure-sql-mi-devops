@@ -57,7 +57,7 @@ jobs:
         id: tf-plan
         run: |
           cd $TF_DIR
-          terraform plan -var "admin_username=${{ secrets.SQL_ADMIN_USER }}" -var "admin_password=${{ secrets.SQL_ADMIN_PASSWORD }}"  -detailed-exitcode -no-color -out tfplan || export exitcode=$?
+          terraform plan -var "admin_username=${{ secrets.SQL_ADMIN_USER }}" -var "admin_password=${{ secrets.SQL_ADMIN_PASSWORD }}" -var "initial_catalog=${{ vars.SQL_INITIAL_CATALOG }}" -detailed-exitcode -no-color -out tfplan || export exitcode=$?
 
       - name: Terraform Apply
         run: |

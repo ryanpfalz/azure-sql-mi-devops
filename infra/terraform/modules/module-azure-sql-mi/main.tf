@@ -116,3 +116,8 @@ resource "random_pet" "prefix" {
   prefix = var.prefix
   length = 1
 }
+
+resource "azurerm_mssql_managed_database" "test" {
+  name                = var.initial_catalog
+  managed_instance_id = azurerm_mssql_managed_instance.main.id
+}

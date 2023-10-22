@@ -7,11 +7,97 @@ on:
 
   workflow_dispatch:
 
+env:
+  SQL_PROJECT_NAME: DemoSqlProj
+  SQL_ARTIFACT_NAME: SqlDb
+
 jobs:
   build:
     name: "Build"
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    env:
+      DOTNET_INSTALL_DIR: "./.dotnet" # https://github.com/actions/setup-dotnet/issues/327#issuecomment-1278572993
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      # - name: Setup .NET SDK
+      #   uses: actions/setup-dotnet@v3
+      #   with:
+      #     dotnet-version: "6.0.x"
+
+      # - name: Install SQL SDK
+      #   run: dotnet new install Microsoft.Build.Sql.Templates
+
+      - name: Build DACPAC
+        run: dotnet build "data/${{ env.SQL_PROJECT_NAME }}/${{ env.SQL_PROJECT_NAME }}.sqlproj" --configuration Release
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: ${{ env.SQL_ARTIFACT_NAME }}
+          path: data/${{ env.SQL_PROJECT_NAME }}/bin/Release
+
+  deployDev:
+    needs: build
+    name: Deploy
+    runs-on: self-hosted
+    # env:
+    #   DOTNET_INSTALL_DIR: "./.dotnet"
+
+    steps:
+      # - name: Install Azure CLI
+      #   run: |
+      #     dotnet --info
+
+      # curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      - name: "Login via Azure CLI"
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_SP_CREDENTIALS }}
+
+      - name: Download Dacpac Artifact
+        uses: actions/download-artifact@v3.0.2
+        with:
+          name: ${{ env.SQL_ARTIFACT_NAME }}
+
+      #   - name: Deploying changes to target
+      #     uses: Azure/run-sqlpackage-action@v1.0.0
+      #     with:
+      #       action: "Publish"
+      #       sourcepath: "./${{ env.SQL_PROJECT_NAME }}.dacpac"
+      #       profile: data/profile.xml
+      #     #   authtoken: ${{ steps.sql-login.outputs.token }}
+
+      #   - name: Setup .NET SDK
+      #     uses: actions/setup-dotnet@v3
+      #     with:
+      #       dotnet-version: "6.0.x"
+
+      #   - name: Install sqlpackage
+      #     run: |
+      #       dotnet tool install -g microsoft.sqlpackage
+
+      # Assuming you're running on an Ubuntu self-hosted runner
+      #   wget -q https://download.microsoft.com/download/3/1/D/31D734E0-BFE8-4C33-A9DE-2392808ADEE2/sqlpackage-linux-x64-latest.zip
+      #   unzip sqlpackage-linux-x64-latest.zip -d sqlpackage
+      #   sudo mv sqlpackage /opt/
+      #   echo "/opt/sqlpackage" >> $GITHUB_PATH
+      #   rm sqlpackage-linux-x64-latest.zip
+
+      - name: Deploy DACPAC to SQL Managed Instance
+        run: |
+          sqlpackage /Action:Publish /SourceFile:"./${{ env.SQL_PROJECT_NAME }}.dacpac" /TargetConnectionString:"Server=tcp:${{ vars.SQL_SERVER_NAME }}.database.windows.net,1433;Initial Catalog=${{ vars.SQL_INITIAL_CATALOG }};Persist Security Info=False;User ID=${{ secrets.SQL_ADMIN_USER }};Password=${{ secrets.SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+
+      #   "Server=your-managed-instance-name,1433;Database=yourdb;User ID=youruser;Password=${{ secrets.DB_PASSWORD }};Trusted_Connection=False;Encrypt=True;Connection Timeout=30;"
+      # - name: Azure SQL Deploy
+      #   uses: Azure/sql-action@v2.1
+      #   with:
+      #     connection-string: "Server=tcp:${{ vars.SQL_SERVER_NAME }}.database.windows.net,1433;Initial Catalog=${{ vars.SQL_INITIAL_CATALOG }};Persist Security Info=False;User ID=${{ secrets.SQL_ADMIN_USER }};Password=${{ secrets.SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      #     path: "./${{ env.SQL_PROJECT_NAME }}.dacpac"
+      #     action: publish
+      #     arguments: "/p:DropObjectsNotInSource=true"
+
+      - name: Clean up runner
+        run: rm -Recurse ${{github.workspace}}\*
