@@ -104,21 +104,29 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 
 ### _*Deploying to the Cloud Infrastructure*_
 
-1. Deploy the SQL Managed Instance with Terraform by running the `Terraform-Deploy-SQL-MI` GitHub Action. This action will take up to 30 minutes to run. This will create a Managed Instance server and database.
-2. Once the SQL Managed Instance is deployed, you need to enable it to communicate with the self-hosted runner. You may do this either by...
+#### Deploying the SQL Managed Instance
 
-   - Creating your runner in the newly created SQL MI virtual network, or
-   - By peering the SQL MI virtual network to an existing virtual network containing a self-hosted runner (this is recommended as it separates the concerns between the MI network and runner network). This was the approach followed in setting up this guide.
-     - To peer the virtual networks, follow the steps [here](https://docs.microsoft.com/en-us/azure/virtual-network/tutorial-connect-virtual-networks-portal) (Since both networks may already exist, you may begin at [this step](https://learn.microsoft.com/en-us/azure/virtual-network/tutorial-connect-virtual-networks-portal#create-virtual-network-peer), and you may skip the 'Create virtual machines' step). _The address space of your SQL MI may not overlap with the address space of your self-hosted runner's network_.
+- Deploy the SQL Managed Instance with Terraform by running the `Terraform-Deploy-SQL-MI` GitHub Action. This action will take up to 30 minutes to run. This will create a Managed Instance server and database.
 
-   Your peering may look something like this:
-   ![Peering](./docs/images/peering.png)
+#### Connecting the Self-Hosted Runner to the SQL Managed Instance
+
+- Once the SQL Managed Instance is deployed, you need to enable it to communicate with the self-hosted runner. You may do this either by...
+
+  - Creating your runner in the newly created SQL MI virtual network, or
+  - By peering the SQL MI virtual network to an existing virtual network containing a self-hosted runner (this is recommended as it separates the concerns between the MI network and runner network). This was the approach followed in setting up this guide.
+    - To peer the virtual networks, follow the steps [here](https://docs.microsoft.com/en-us/azure/virtual-network/tutorial-connect-virtual-networks-portal) (Since both networks may already exist, you may begin at [this step](https://learn.microsoft.com/en-us/azure/virtual-network/tutorial-connect-virtual-networks-portal#create-virtual-network-peer), and you may skip the 'Create virtual machines' step). _The address space of your SQL MI may not overlap with the address space of your self-hosted runner's network_.
+
+  Your peering may look something like this:
+  ![Peering](./docs/images/peering.png)
 
 - Create a [virtual network link](https://learn.microsoft.com/en-us/azure/dns/private-dns-virtual-network-links) to the runner's virtual network on the MI's Private DNS Zone.
 
 #### Verifying the Connection
+
 - From the VM, you can verify the connectivity over the peering/network link by running the following PowerShell command: `Test-NetConnection -computer <private endpoint>.database.windows.net -port 1433`.
 - A script that can be run locally on the runner to test the connection and build/deploy steps prior to running the GitHub Action is in `etc/runner-build-test.ps1`.
+
+#### Running the CI/CD Action
 
 3. After the virtual networks are peered, you may run the `SQL-MI-CICD` GitHub Action to deploy the sample database to the SQL Managed Instance.
 
