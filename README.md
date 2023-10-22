@@ -128,6 +128,7 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 #### Running the CI/CD Action
 
 - After the virtual networks are peered/linked and tested, you may run the `SQL-MI-CICD` GitHub Action to deploy the SQL Project into the sample database in the SQL Managed Instance server.
+- The SQL Project in this codebase deploys a simple table. You may modify the SQL Project to deploy your own schema and data.
 
 ## Architecture & Workflow
 
