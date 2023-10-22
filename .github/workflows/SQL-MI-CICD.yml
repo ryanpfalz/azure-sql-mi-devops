@@ -48,7 +48,7 @@ jobs:
           name: ${{ env.SQL_ARTIFACT_NAME }}
 
       - name: "Get SQL MI FQDN"
-        shell: pwsh
+        # shell: pwsh
         run: |
           $resourceGroup = "mi-${{ vars.RESOURCE_NAME_ROOT }}-rg"
           $sqlMiName = "mi-${{ vars.RESOURCE_NAME_ROOT }}-mssql"

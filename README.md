@@ -93,6 +93,7 @@ The scenario presented in this codebase is simple and contrived - it is not inte
     - Add Nuget source to install SqlPackage: `dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org`
     - [SqlPackage (dotnet package)](https://learn.microsoft.com/en-us/sql/tools/sqlpackage/sqlpackage-download?view=sql-server-ver16#installation-cross-platform): `dotnet tool install -g microsoft.sqlpackage`
     - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows?tabs=azure-cli)
+    - [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3#installing-the-msi-package) for running `pwsh` command
 
   - For testing, you may consider installing additional tools on the self-hosted runner like [Git](https://git-scm.com/downloads) and [Azure Data Studio](https://docs.microsoft.com/en-us/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15).
 
@@ -121,8 +122,8 @@ The scenario presented in this codebase is simple and contrived - it is not inte
 
 #### Verifying the Connection
 
-- From the self-hosted runner VM, you can verify the connectivity over the peering/network link by running the following PowerShell command: `Test-NetConnection -computer <private endpoint>.database.windows.net -port 1433`.
-- A script that can be run locally on the runner to test the connection and build/deploy steps prior to running the GitHub Action is in `etc/runner-build-test.ps1`.
+- From the self-hosted runner VM, you can verify the connectivity over the peering/network link by running the following PowerShell command: `Test-NetConnection -computer <sql-mi-host> -port 1433`.
+- A script that can be run locally on the runner to test the connection and build/deploy/debug steps prior to running the GitHub Action is in `etc/runner-build-test.ps1`.
 
 #### Running the CI/CD Action
 
