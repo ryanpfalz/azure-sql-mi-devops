@@ -37,8 +37,8 @@ The scenario presented in this codebase is simple and contrived - it is not inte
   - Storage Account for Managing Remote Terraform State
   - Setting any of the variables starting with `TF_`
 -  If using Bicep, you will need to update the following:
-  - You may consider renaming the the `Terraform-Deploy` workflow
-  - You will need to update the pipeline by removing the Terraform-specific commands and adding [Bicep-specific commands](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/deployment-script-bicep)
+    - You may consider renaming the the `Terraform-Deploy` workflow
+    - You will need to update the pipeline by removing the Terraform-specific commands and adding [Bicep-specific commands](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/deployment-script-bicep)
 
 #### Storage Account for Managing Remote Terraform State
 
