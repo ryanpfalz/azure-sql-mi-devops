@@ -43,7 +43,7 @@ jobs:
           creds: ${{ secrets.AZURE_SP_CREDENTIALS }}
 
       - name: Download Dacpac Artifact
-        uses: actions/download-artifact@v3.0.2
+        uses: actions/download-artifact@v4.1.7
         with:
           name: ${{ env.SQL_ARTIFACT_NAME }}
 
